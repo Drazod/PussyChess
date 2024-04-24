@@ -13,7 +13,7 @@ def display_flipbook(screen, board_width, board_height,current_page, flipbook_wi
     flipbook_y = 0  # Align the top of the flip book with the top of the screen
 
     # Directory containing images
-    image_dir = r'C:\Users\Admin\OneDrive\Documents\BKU\Junior\Game\Game4\Player2\assets\images'
+    image_dir = r'C:\Users\Phan Thien\OneDrive\Documents\GitHub\PussyChess\Player2\assets\images'
 
     # Load images for the flipbook pages
     image_files = [f for f in os.listdir(image_dir) if f.startswith('page_')]

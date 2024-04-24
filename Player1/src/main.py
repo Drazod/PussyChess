@@ -18,6 +18,8 @@ class Main:
         self.font = pygame.font.SysFont(None, 30)  # Font for displaying alerts
         self.move = None
         self.client = None  # Client for multiplayer functionality
+        self.player_vs_player = False
+        self.radom = False
 
     def show_alert(self, message):
         alert_text = self.font.render(message, True, (255, 0, 0))

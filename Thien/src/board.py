@@ -13,8 +13,7 @@ class Board:
         self.last_move = None
         self._create()
         self._add_pieces('white')
-        self._add_pieces('black')
-
+        self._add_pieces('black')    
     def move(self, piece, move, testing=False):
         initial = move.initial
         final = move.final
@@ -58,7 +57,6 @@ class Board:
         self.last_move = move
 
     def valid_move(self, piece, move):
-        print(0, piece, move)
         return move in piece.moves
 
     def check_promotion(self, piece, final):

@@ -16,6 +16,74 @@ class Game:
         self.config = Config()
 
     # blit methods
+    def game_over(self):
+        return self.valid_move == []
+    def collect_valid_move(self):
+        self.loose_king = True
+        valid_moves = []
+        for row in range(ROWS):
+            for col in range(COLS):
+                if self.board.squares[row][col].has_piece():
+                    piece = self.board.squares[row][col].piece
+                    if piece.color == self.next_player:
+                        self.board.calc_moves(piece, row, col)
+                        
+                        if piece.name == 'king':
+                            self.loose_king = False
+                            # self.king_pos = (row, col)
+                            # print(piece,(row, col))
+                        for move in piece.moves:
+                            valid_moves.append((piece,move))
+        self.valid_move = valid_moves
+        # return valid_moves
+    def eval(self):
+        white_score = 0
+        black_score = 0
+
+        for row in range(ROWS):
+            for col in range(COLS):
+                if self.board.squares[row][col].has_piece():
+                    piece = self.board.squares[row][col].piece
+                    if piece.color == 'white':
+                        white_score += piece.value  # Add the piece value to white's score
+                    else:
+                        black_score += piece.value  # Add the piece value to black's score
+        # Calculate the overall material advantage
+        material_advantage = white_score + black_score
+        return material_advantage
+    
+    def minimax_ai(self,depth, maximizing_player):
+        if depth == 0 or self.game_over():
+            return None, self.eval()  # Return the evaluation score when depth is 0 or the game is over
+        
+        if maximizing_player:
+            best_move = None
+            max_eval = float('-inf')  # Negative infinity
+            
+            for piece_move in self.collect_valid_move():
+                self.board.move(piece_move[0],piece_move[1])
+                _, eval_score = self.minimax_ai(depth - 1, False)  # Recur with depth - 1 for opponent's turn
+                self.board.undo_move()
+                
+                if eval_score > max_eval:
+                    max_eval = eval_score
+                    best_move = piece_move[1]
+
+            return best_move, max_eval
+        else:
+            best_move = None
+            min_eval = float('inf')  # Positive infinity
+            
+            for piece_move in self.collect_valid_move():
+                self.board.move(piece_move[0],piece_move[1])
+                _, eval_score = self.minimax_ai(depth - 1, True)  # Recur with depth - 1 for AI's turn
+                self.board.undo_move()
+                
+                if eval_score < min_eval:
+                    min_eval = eval_score
+                    best_move = piece_move[1]
+
+            return best_move, min_eval
 
     def show_bg(self, surface):
         theme = self.config.theme
@@ -24,9 +92,9 @@ class Game:
             for col in range(COLS):
                 # Load the image based on whether the square is light or dark
                 if (row + col) % 2 == 0:
-                    img = pygame.image.load("assets/images/light_square_image.png")
+                    img = pygame.image.load("../assets/images/light_square_image.png")
                 else:
-                    img = pygame.image.load("assets/images/dark_square_image.png")
+                    img = pygame.image.load("../assets/images/dark_square_image.png")
 
                 # Scale the image to match the size of a square
                 img = pygame.transform.scale(img, (SQSIZE, SQSIZE))
